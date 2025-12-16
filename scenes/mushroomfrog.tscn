@@ -1,0 +1,117 @@
+[gd_scene load_steps=12 format=3 uid="uid://bg2aemc6i1h2d"]
+
+[ext_resource type="Texture2D" uid="uid://mgglfuujx8hf" path="res://art/sprites/mushyroomyguy.png" id="1_cpxss"]
+[ext_resource type="Script" uid="uid://dts8ntij35xkh" path="res://scenes/mushroomfrog.gd" id="1_skak0"]
+[ext_resource type="Texture2D" uid="uid://2ku0usdktl7l" path="res://art/sprites/Keyboard_mix.png" id="2_p08k1"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_kwbpv"]
+atlas = ExtResource("1_cpxss")
+region = Rect2(0, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_p08k1"]
+atlas = ExtResource("1_cpxss")
+region = Rect2(0, 64, 64, 64)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_skak0"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_kwbpv")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_p08k1")
+}],
+"loop": true,
+"name": &"default",
+"speed": 1.0
+}]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_r3abj"]
+radius = 50.0088
+height = 181.905
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_a8y0u"]
+atlas = ExtResource("2_p08k1")
+region = Rect2(64, 0, 16, 18)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_r3abj"]
+animations = [{
+"frames": [],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_a8y0u")
+}],
+"loop": true,
+"name": &"new_animation",
+"speed": 5.0
+}]
+
+[sub_resource type="GDScript" id="GDScript_p08k1"]
+script/source = "extends AnimatedSprite2D
+
+var can_enter := false
+
+
+func _ready() -> void:
+	hide()
+
+
+
+func _process(delta: float) -> void:
+	if can_enter and Input.is_key_pressed(KEY_E):
+		print(\"mushroomfrog\")
+		can_enter = false
+
+
+
+func _on_mushroomfrog_body_entered(body: Node2D) -> void:
+	can_enter = true
+	show()
+
+
+func _on_mushroomfrog_body_exited(body: Node2D) -> void:
+	can_enter = false
+	hide()
+"
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_skak0"]
+radius = 23.0
+height = 80.0
+
+[node name="mushroomfrog" type="Area2D"]
+z_index = 4
+collision_layer = 3
+collision_mask = 3
+script = ExtResource("1_skak0")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+position = Vector2(-1.90735e-06, 0)
+scale = Vector2(-1.62657, 1.69435)
+sprite_frames = SubResource("SpriteFrames_skak0")
+autoplay = "default"
+frame_progress = 0.880955
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+rotation = 1.55765
+shape = SubResource("CapsuleShape2D_r3abj")
+
+[node name="E" type="AnimatedSprite2D" parent="."]
+z_index = 11
+position = Vector2(-4, -65)
+scale = Vector2(1.16555, 1.16555)
+sprite_frames = SubResource("SpriteFrames_r3abj")
+animation = &"new_animation"
+script = SubResource("GDScript_p08k1")
+
+[node name="StaticBody2D" type="StaticBody2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D"]
+position = Vector2(-8, 6)
+shape = SubResource("CapsuleShape2D_skak0")
+
+[connection signal="body_entered" from="." to="E" method="_on_mushroomfrog_body_entered"]
+[connection signal="body_exited" from="." to="E" method="_on_mushroomfrog_body_exited"]
